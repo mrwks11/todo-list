@@ -1,0 +1,68 @@
+/* GENERAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+body {
+  margin: 20px;
+}
+
+/* CONTAINERS */
+.main-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.project-list-container,
+.task-list-container {
+  border: 1px solid black;
+  background-color: teal;
+  color: white;
+  margin-top: 33px;
+  margin-right: 20px;
+  padding: 10px;
+}
+
+/* FORMS */
+.project-form,
+.task-form {
+  margin-top: 20px;
+}
+
+.project-fieldset,
+.task-fieldset {
+  padding: 20px;
+}
+
+.project-legend,
+.task-legend {
+  font-size: 1.5em;
+}
+
+.project-label,
+.task-label {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.project-input,
+.project-create-button,
+.task-input,
+.task-create-button {
+  display: block;
+  font-size: 1.1em;
+  margin-bottom: 15px;
+  padding: 5px 10px;
+}
+
+.project-list-item,
+.task-list-item {
+  font-size: 18px;
+  list-style: circle;
+  padding-top: 10px;
+  margin-left: 20px;
+}

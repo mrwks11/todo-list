@@ -13,12 +13,18 @@ const taskListContainer = document.querySelector('.task-list-container');
 const taskList = document.querySelector('.task-list');
 
 // FUNCTIONS
+function renderAllProjects() {
+  const projects = getProjects();
+  projects.forEach((project) => renderProject(project));
+}
+
 function createNewProjectHandler(e) {
   e.preventDefault();
   if (projectInputTitle.value === null || projectInputTitle.value === '')
     return;
-  const newProject = createNewProject();
-  renderNewProject();
+  const project = createNewProject();
+  renderProject(project);
+  saveProject(project);
   clearUserInput();
 }
 
@@ -30,10 +36,10 @@ function createNewProject() {
   };
 }
 
-function renderNewProject() {
+function renderProject(project) {
   const newProjectListElement = document.createElement('li');
   newProjectListElement.classList.add('project-list-item');
-  newProjectListElement.innerText = projectInputTitle.value;
+  newProjectListElement.innerText = project.title;
   projectList.appendChild(newProjectListElement);
 }
 
@@ -70,6 +76,26 @@ function clearUserInput() {
   taskInputPriority.value = null;
 }
 
+// SAVE IN LOCAL STORAGE
+function getProjects() {
+  let projects;
+  if (localStorage.getItem('projects') === null) {
+    projects = [];
+  } else {
+    projects = JSON.parse(localStorage.getItem('projects'));
+  }
+  return projects;
+}
+
+function saveProject(project) {
+  const projects = getProjects();
+  projects.push(project);
+  localStorage.setItem('projects', JSON.stringify(projects));
+  console.log(projects);
+}
+
 // EVENTS
 projectCreateButton.addEventListener('click', createNewProjectHandler);
 taskCreateButton.addEventListener('click', createNewTaskHandler);
+
+document.addEventListener('DOMContentLoaded', renderAllProjects());

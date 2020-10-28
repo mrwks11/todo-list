@@ -37,9 +37,39 @@ function renderNewProject() {
   projectList.appendChild(newProjectListElement);
 }
 
+function createNewTaskHandler(e) {
+  e.preventDefault();
+  if (taskInputTitle.value == null || taskInputTitle.value === '') return;
+  const newTask = createNewTask();
+  renderNewTask();
+  clearUserInput();
+}
+
+function createNewTask() {
+  return {
+    title: taskInputTitle.value,
+    description: taskInputDescription.value,
+    date: taskInputDueDate.value,
+    priority: taskInputPriority.value,
+    // id: Date.now().toString,
+  };
+}
+
+function renderNewTask() {
+  const newTaskListElement = document.createElement('li');
+  newTaskListElement.classList.add('task-list-item');
+  newTaskListElement.innerText = taskInputTitle.value;
+  taskList.appendChild(newTaskListElement);
+}
+
 function clearUserInput() {
   projectInputTitle.value = null;
+  taskInputTitle.value = null;
+  taskInputDescription.value = null;
+  taskInputDueDate.value = null;
+  taskInputPriority.value = null;
 }
 
 // EVENTS
 projectCreateButton.addEventListener('click', createNewProjectHandler);
+taskCreateButton.addEventListener('click', createNewTaskHandler);

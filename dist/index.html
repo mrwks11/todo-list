@@ -13,7 +13,24 @@
     <div class="main-container">
       <div class="project-list-container">
         <h2>Projects</h2>
-        <ul class="project-list"></ul>
+        <ul class="project-list">
+          <li class="project-list-item active">
+            Example Project 1<button
+              class="button project-remove-button"
+              data-id="default1"
+            >
+              Remove
+            </button>
+          </li>
+          <li class="project-list-item">
+            Example Project 2<button
+              class="button project-remove-button"
+              data-id="default2"
+            >
+              Remove
+            </button>
+          </li>
+        </ul>
       </div>
 
       <form class="project-form">
@@ -21,7 +38,7 @@
           <legend class="project-legend">Create New Project</legend>
           <label for="project-title" class="project-label">Project Name</label>
           <input type="text" class="project-input" id="project-title" />
-          <button type="submit" class="project-create-button">
+          <button type="submit" class="button project-create-button">
             Add Project
           </button>
         </fieldset>
@@ -37,7 +54,12 @@
           <legend class="task-legend">Create New Task</legend>
           <label class="task-label" for="project-selector">Project</label>
           <select class="task-input" id="project-selector">
-            <!-- <option value="Default">Default</option> -->
+            <option class="project-option" value="Default" data-id="default1">
+              Example Project 1
+            </option>
+            <option class="project-option" value="Default" data-id="default2">
+              Example Project 2
+            </option>
           </select>
           <label class="task-label" for="task-title">Title</label>
           <input type="text" class="task-input" id="task-title" />
@@ -45,13 +67,17 @@
           <textarea class="task-input" id="task-description"></textarea>
           <label class="task-label" for="task-date">Due Date</label>
           <input type="date" class="task-input" id="task-date" />
+          <label class="task-label" for="task-time">Time</label>
+          <input type="time" class="task-input" id="task-time" />
           <label class="task-label" for="task-priority">Priority</label>
           <select class="task-input" id="task-priority">
             <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
+            <option value="Medium" selected="selected">Medium</option>
             <option value="High">High</option>
           </select>
-          <button type="submit" class="task-create-button">Add Task</button>
+          <button type="submit" class="button task-create-button">
+            Add Task
+          </button>
         </fieldset>
       </form>
     </div>

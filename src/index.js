@@ -6,12 +6,13 @@ const projectCreateButton = document.querySelector('.project-create-button');
 const projectListContainer = document.querySelector('.project-list-container');
 const projectList = document.querySelector('.project-list');
 const projectListItem = document.querySelectorAll('.project-list-item');
-const projectRemoveButton = document.querySelectorAll('.remove-btn');
+const projectRemoveButton = document.querySelectorAll('.project-remove-button');
 
 const taskInputProjectSelector = document.getElementById('project-selector');
 const taskInputTitle = document.getElementById('task-title');
 const taskInputDescription = document.getElementById('task-description');
 const taskInputDueDate = document.getElementById('task-date');
+const taskInputTime = document.getElementById('task-time');
 const taskInputPriority = document.getElementById('task-priority');
 const taskCreateButton = document.querySelector('.task-create-button');
 const taskListContainer = document.querySelector('.task-list-container');
@@ -26,19 +27,37 @@ function renderAllSavedProjects() {
 
 function createNewProjectHandler(e) {
   e.preventDefault();
-  if (projectInputTitle.value === null || projectInputTitle.value === '')
-    return;
+  if (checkInputTitleEmpty(projectInputTitle.value)) return;
+  if (checkInputTitleExists(projectInputTitle.value)) return;
   const project = createNewProject();
   renderProject(project);
   saveProjectLocalStorage(project);
   clearUserInput();
 }
 
+function checkInputTitleEmpty(title) {
+  if (title === null || title === '') {
+    alert('Title cannot be empty, please fill in a project title.');
+    return true;
+  }
+  return false;
+}
+
+function checkInputTitleExists(title) {
+  const projects = getProjectsLocalStorage();
+  projects.forEach((project) => {
+    if (title === project.title) {
+      alert('Project already exists, please enter a new title.');
+      return true;
+    }
+  });
+}
+
 function createNewProject() {
   return {
     title: projectInputTitle.value,
-    tasks: [],
     id: new Date().valueOf(),
+    tasks: [],
   };
 }
 
@@ -46,14 +65,16 @@ function renderProject(project) {
   const newProjectListElement = document.createElement('li');
   newProjectListElement.classList.add('project-list-item');
   newProjectListElement.innerHTML = `
-    ${project.title} <button class="btn remove-btn" data-id="${project.id}">Remove</button>
+    ${project.title} <button class="button project-remove-button" data-id="${project.id}">Remove</button>
   `;
   projectList.appendChild(newProjectListElement);
-  updateProjectSelector(project);
+  createProjectSelectorOption(project);
 }
 
-function updateProjectSelector(project) {
+function createProjectSelectorOption(project) {
   const newOptionElement = document.createElement('option');
+  newOptionElement.classList.add('project-option');
+  newOptionElement.setAttribute('data-id', project.id);
   newOptionElement.setAttribute('value', project.title);
   newOptionElement.innerText = project.title;
   taskInputProjectSelector.appendChild(newOptionElement);
@@ -62,10 +83,11 @@ function updateProjectSelector(project) {
 function removeProjectHandler(target, id) {
   removeProjectUI(target);
   removeProjectLocalStorage(id);
+  // removeProjectSelector(id);
 }
 
 function removeProjectUI(target) {
-  if (target.classList.contains('remove-btn')) {
+  if (target.classList.contains('project-remove-button')) {
     target.parentElement.remove();
   }
 }
@@ -130,12 +152,18 @@ function removeProjectLocalStorage(id) {
   localStorage.setItem('projects', JSON.stringify(projects));
 }
 
+// TOGGLE
+// function toggleActiveClass(target) {
+//   target.classList.toggle('active');
+// }
+
 // EVENTS
 projectCreateButton.addEventListener('click', createNewProjectHandler);
 taskCreateButton.addEventListener('click', createNewTaskHandler);
 
-projectListContainer.addEventListener('click', (e) => {
+projectList.addEventListener('click', (e) => {
   removeProjectHandler(e.target, e.target.dataset.id);
+  // toggleActiveClass(e.target);
 });
 
 document.addEventListener('DOMContentLoaded', renderAllSavedProjects);

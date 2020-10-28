@@ -1,9 +1,14 @@
 // SELECTORS
+const mainContainer = document.querySelector('.main-container');
+
 const projectInputTitle = document.getElementById('project-title');
 const projectCreateButton = document.querySelector('.project-create-button');
 const projectListContainer = document.querySelector('.project-list-container');
 const projectList = document.querySelector('.project-list');
+const projectListItem = document.querySelectorAll('.project-list-item');
+const projectRemoveButton = document.querySelectorAll('.remove-btn');
 
+const taskInputProjectSelector = document.getElementById('project-selector');
 const taskInputTitle = document.getElementById('task-title');
 const taskInputDescription = document.getElementById('task-description');
 const taskInputDueDate = document.getElementById('task-date');
@@ -13,9 +18,10 @@ const taskListContainer = document.querySelector('.task-list-container');
 const taskList = document.querySelector('.task-list');
 
 // FUNCTIONS
-function renderAllProjects() {
-  const projects = getProjects();
+function renderAllSavedProjects() {
+  const projects = getProjectsLocalStorage();
   projects.forEach((project) => renderProject(project));
+  // console.log(projects);
 }
 
 function createNewProjectHandler(e) {
@@ -24,7 +30,7 @@ function createNewProjectHandler(e) {
     return;
   const project = createNewProject();
   renderProject(project);
-  saveProject(project);
+  saveProjectLocalStorage(project);
   clearUserInput();
 }
 
@@ -32,21 +38,42 @@ function createNewProject() {
   return {
     title: projectInputTitle.value,
     tasks: [],
-    // id: Date.now().toString,
+    id: new Date().valueOf(),
   };
 }
 
 function renderProject(project) {
   const newProjectListElement = document.createElement('li');
   newProjectListElement.classList.add('project-list-item');
-  newProjectListElement.innerText = project.title;
+  newProjectListElement.innerHTML = `
+    ${project.title} <button class="btn remove-btn" data-id="${project.id}">Remove</button>
+  `;
   projectList.appendChild(newProjectListElement);
+  updateProjectSelector(project);
+}
+
+function updateProjectSelector(project) {
+  const newOptionElement = document.createElement('option');
+  newOptionElement.setAttribute('value', project.title);
+  newOptionElement.innerText = project.title;
+  taskInputProjectSelector.appendChild(newOptionElement);
+}
+
+function removeProjectHandler(target, id) {
+  removeProjectUI(target);
+  removeProjectLocalStorage(id);
+}
+
+function removeProjectUI(target) {
+  if (target.classList.contains('remove-btn')) {
+    target.parentElement.remove();
+  }
 }
 
 function createNewTaskHandler(e) {
   e.preventDefault();
   if (taskInputTitle.value == null || taskInputTitle.value === '') return;
-  const newTask = createNewTask();
+  const task = createNewTask();
   renderNewTask();
   clearUserInput();
 }
@@ -76,8 +103,8 @@ function clearUserInput() {
   taskInputPriority.value = null;
 }
 
-// SAVE IN LOCAL STORAGE
-function getProjects() {
+// LOCAL STORAGE
+function getProjectsLocalStorage() {
   let projects;
   if (localStorage.getItem('projects') === null) {
     projects = [];
@@ -87,15 +114,28 @@ function getProjects() {
   return projects;
 }
 
-function saveProject(project) {
-  const projects = getProjects();
+function saveProjectLocalStorage(project) {
+  const projects = getProjectsLocalStorage();
   projects.push(project);
   localStorage.setItem('projects', JSON.stringify(projects));
-  console.log(projects);
+}
+
+function removeProjectLocalStorage(id) {
+  const projects = getProjectsLocalStorage();
+  projects.forEach((project, index) => {
+    if (project.id == id) {
+      projects.splice(index, 1);
+    }
+  });
+  localStorage.setItem('projects', JSON.stringify(projects));
 }
 
 // EVENTS
 projectCreateButton.addEventListener('click', createNewProjectHandler);
 taskCreateButton.addEventListener('click', createNewTaskHandler);
 
-document.addEventListener('DOMContentLoaded', renderAllProjects());
+projectListContainer.addEventListener('click', (e) => {
+  removeProjectHandler(e.target, e.target.dataset.id);
+});
+
+document.addEventListener('DOMContentLoaded', renderAllSavedProjects);

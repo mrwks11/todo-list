@@ -11,6 +11,18 @@ body {
   margin: 20px;
 }
 
+.btn {
+  cursor: pointer;
+  float: right;
+  padding: 3px 6px;
+}
+
+.remove-btn {
+  background-color: red;
+  border: solid white 1px;
+  color: white;
+}
+
 /* CONTAINERS */
 .main-container {
   display: grid;
@@ -65,4 +77,5 @@ body {
   list-style: circle;
   padding-top: 10px;
   margin-left: 20px;
+  /* cursor: pointer; */
 }

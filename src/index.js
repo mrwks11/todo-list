@@ -1,16 +1,20 @@
 // SELECTORS
 const mainContainer = document.querySelector('.main-container');
 
+const projectForm = document.querySelector('.project-form');
 const projectInputTitle = document.getElementById('project-title');
 const projectCreateButton = document.querySelector('.project-create-button');
 const projectListContainer = document.querySelector('.project-list-container');
 const projectList = document.querySelector('.project-list');
-const projectListItem = document.querySelectorAll('.project-list-item');
+const projectListItems = document.querySelectorAll('.project-list-item');
 const projectRemoveButtons = document.querySelectorAll(
   '.project-remove-button'
 );
 
 const taskInputProjectSelector = document.getElementById('project-selector');
+const taskInputProjectSelectorOptions = document.querySelectorAll(
+  '.project-option'
+);
 const taskInputTitle = document.getElementById('task-title');
 const taskInputDescription = document.getElementById('task-description');
 const taskInputDueDate = document.getElementById('task-date');
@@ -20,17 +24,19 @@ const taskCreateButton = document.querySelector('.task-create-button');
 const taskListContainer = document.querySelector('.task-list-container');
 const taskList = document.querySelector('.task-list');
 
+let activeProject;
+
 // INITIAL DOM LOAD
-function renderAllSavedProjects() {
+function renderStoredProjects() {
   const projects = getProjectsLocalStorage();
   projects.forEach((project) => renderProject(project));
+  console.log(projects);
 }
 
 // PROJECTS
 function createNewProjectHandler(e) {
   e.preventDefault();
   if (checkInputTitleEmpty(projectInputTitle.value)) return;
-  // if (checkInputTitleExists(projectInputTitle.value)) return;
   const project = createNewProjectObject();
   saveProjectLocalStorage(project);
   renderProject(project);
@@ -45,16 +51,6 @@ function checkInputTitleEmpty(title) {
   return false;
 }
 
-// function checkInputTitleExists(title) {
-//   const projects = getProjectsLocalStorage();
-//   projects.forEach((project) => {
-//     if (title === project.title) {
-//       alert('Project already exists, please enter a new title.');
-//       return true;
-//     }
-//   });
-// }
-
 function createNewProjectObject() {
   return {
     title: projectInputTitle.value,
@@ -64,18 +60,18 @@ function createNewProjectObject() {
 }
 
 function renderProject(project) {
-  createProjectElements(project);
+  createProjectListItems(project);
   createProjectSelectorOption(project);
 }
 
-function createProjectElements(project) {
-  const newProjectListElement = document.createElement('li');
-  newProjectListElement.classList.add('project-list-item');
-  newProjectListElement.setAttribute('data-id', `${project.id}`);
-  newProjectListElement.innerHTML = `
+function createProjectListItems(project) {
+  const newProjectListItem = document.createElement('li');
+  newProjectListItem.classList.add('project-list-item');
+  newProjectListItem.setAttribute('data-id', `${project.id}`);
+  newProjectListItem.innerHTML = `
     ${project.title} <button class="button project-remove-button" data-id="${project.id}">Remove</button>
   `;
-  projectList.appendChild(newProjectListElement);
+  projectList.appendChild(newProjectListItem);
 }
 
 function createProjectSelectorOption(project) {
@@ -111,10 +107,10 @@ function removeProjectSelectorOption(target, id) {
   });
 }
 
-function changeActiveProjectHandler(target) {
+function updateActiveProjectHandler(target) {
   setCurrentProject(target);
-  changeActiveClass();
-  changeActiveProjectSelector();
+  updateActiveProjectClass();
+  updateActiveProjectSelector();
 }
 
 function setCurrentProject(target) {
@@ -124,9 +120,9 @@ function setCurrentProject(target) {
   }
 }
 
-function changeActiveClass() {
-  const projectListItem = document.querySelectorAll('.project-list-item');
-  projectListItem.forEach((item) => {
+function updateActiveProjectClass() {
+  const projectListItems = document.querySelectorAll('.project-list-item');
+  projectListItems.forEach((item) => {
     if (item.classList.contains('project-list-item')) {
       item.classList.remove('active');
     }
@@ -136,9 +132,11 @@ function changeActiveClass() {
   });
 }
 
-function changeActiveProjectSelector() {
-  const projectSelectorOptions = document.querySelectorAll('.project-option');
-  projectSelectorOptions.forEach((option) => {
+function updateActiveProjectSelector() {
+  const taskInputProjectSelectorOptions = document.querySelectorAll(
+    '.project-option'
+  );
+  taskInputProjectSelectorOptions.forEach((option) => {
     option.removeAttribute('selected');
     if (option.dataset.id == activeProject) {
       option.setAttribute('selected', 'selected');
@@ -147,6 +145,33 @@ function changeActiveProjectSelector() {
 }
 
 // TASKS
+function createNewTaskHandler(e) {
+  e.preventDefault();
+  if (taskInputTitle.value == null || taskInputTitle.value === '') return;
+  const task = createNewTaskObject();
+  // console.log(task);
+  saveTaskLocalStorage(task);
+  renderTask(task);
+  clearUserInput();
+}
+
+function createNewTaskObject() {
+  return {
+    project: taskInputProjectSelector.value,
+    title: taskInputTitle.value,
+    description: taskInputDescription.value,
+    date: taskInputDueDate.value,
+    priority: taskInputPriority.value,
+    id: new Date().valueOf(),
+  };
+}
+
+function renderTask(task) {
+  const newTaskListElement = document.createElement('li');
+  newTaskListElement.classList.add('task-list-item');
+  newTaskListElement.innerText = task.title;
+  taskList.appendChild(newTaskListElement);
+}
 
 // CLEAR USER INPUT
 function clearUserInput() {
@@ -184,13 +209,24 @@ function removeProjectLocalStorage(id) {
   localStorage.setItem('projects', JSON.stringify(projects));
 }
 
+// function saveTaskLocalStorage(task) {
+//   const projects = getProjectsLocalStorage();
+//   projects.forEach((project) => {
+//     if (project.title == task.project) {
+//       projects.push(task);
+//     }
+//   });
+// }
+
 // EVENTS
-projectCreateButton.addEventListener('click', createNewProjectHandler);
+projectForm.addEventListener('submit', createNewProjectHandler);
 projectList.addEventListener('click', (e) => {
   removeProjectHandler(e.target, e.target.dataset.id);
 });
 projectList.addEventListener('click', (e) => {
-  changeActiveProjectHandler(e.target);
+  updateActiveProjectHandler(e.target);
 });
 
-document.addEventListener('DOMContentLoaded', renderAllSavedProjects);
+taskCreateButton.addEventListener('click', createNewTaskHandler);
+
+document.addEventListener('DOMContentLoaded', renderStoredProjects);

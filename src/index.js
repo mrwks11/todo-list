@@ -6,7 +6,9 @@ const projectCreateButton = document.querySelector('.project-create-button');
 const projectListContainer = document.querySelector('.project-list-container');
 const projectList = document.querySelector('.project-list');
 const projectListItem = document.querySelectorAll('.project-list-item');
-const projectRemoveButton = document.querySelectorAll('.project-remove-button');
+const projectRemoveButtons = document.querySelectorAll(
+  '.project-remove-button'
+);
 
 const taskInputProjectSelector = document.getElementById('project-selector');
 const taskInputTitle = document.getElementById('task-title');
@@ -18,20 +20,20 @@ const taskCreateButton = document.querySelector('.task-create-button');
 const taskListContainer = document.querySelector('.task-list-container');
 const taskList = document.querySelector('.task-list');
 
-// FUNCTIONS
+// INITIAL DOM LOAD
 function renderAllSavedProjects() {
   const projects = getProjectsLocalStorage();
   projects.forEach((project) => renderProject(project));
-  // console.log(projects);
 }
 
+// PROJECTS
 function createNewProjectHandler(e) {
   e.preventDefault();
   if (checkInputTitleEmpty(projectInputTitle.value)) return;
-  if (checkInputTitleExists(projectInputTitle.value)) return;
-  const project = createNewProject();
-  renderProject(project);
+  // if (checkInputTitleExists(projectInputTitle.value)) return;
+  const project = createNewProjectObject();
   saveProjectLocalStorage(project);
+  renderProject(project);
   clearUserInput();
 }
 
@@ -43,17 +45,17 @@ function checkInputTitleEmpty(title) {
   return false;
 }
 
-function checkInputTitleExists(title) {
-  const projects = getProjectsLocalStorage();
-  projects.forEach((project) => {
-    if (title === project.title) {
-      alert('Project already exists, please enter a new title.');
-      return true;
-    }
-  });
-}
+// function checkInputTitleExists(title) {
+//   const projects = getProjectsLocalStorage();
+//   projects.forEach((project) => {
+//     if (title === project.title) {
+//       alert('Project already exists, please enter a new title.');
+//       return true;
+//     }
+//   });
+// }
 
-function createNewProject() {
+function createNewProjectObject() {
   return {
     title: projectInputTitle.value,
     id: new Date().valueOf(),
@@ -62,13 +64,18 @@ function createNewProject() {
 }
 
 function renderProject(project) {
+  createProjectElements(project);
+  createProjectSelectorOption(project);
+}
+
+function createProjectElements(project) {
   const newProjectListElement = document.createElement('li');
   newProjectListElement.classList.add('project-list-item');
+  newProjectListElement.setAttribute('data-id', `${project.id}`);
   newProjectListElement.innerHTML = `
     ${project.title} <button class="button project-remove-button" data-id="${project.id}">Remove</button>
   `;
   projectList.appendChild(newProjectListElement);
-  createProjectSelectorOption(project);
 }
 
 function createProjectSelectorOption(project) {
@@ -81,42 +88,67 @@ function createProjectSelectorOption(project) {
 }
 
 function removeProjectHandler(target, id) {
-  removeProjectUI(target);
+  removeProjectDOM(target);
+  removeProjectSelectorOption(target, id);
   removeProjectLocalStorage(id);
-  // removeProjectSelector(id);
 }
 
-function removeProjectUI(target) {
+function removeProjectDOM(target) {
   if (target.classList.contains('project-remove-button')) {
     target.parentElement.remove();
   }
 }
 
-function createNewTaskHandler(e) {
-  e.preventDefault();
-  if (taskInputTitle.value == null || taskInputTitle.value === '') return;
-  const task = createNewTask();
-  renderNewTask();
-  clearUserInput();
+function removeProjectSelectorOption(target, id) {
+  const projectSelectorOptions = document.querySelectorAll('.project-option');
+  projectSelectorOptions.forEach((option, index) => {
+    if (
+      option.dataset.id == id &&
+      target.classList.contains('project-remove-button')
+    ) {
+      taskInputProjectSelector.remove(index, 1);
+    }
+  });
 }
 
-function createNewTask() {
-  return {
-    title: taskInputTitle.value,
-    description: taskInputDescription.value,
-    date: taskInputDueDate.value,
-    priority: taskInputPriority.value,
-    // id: Date.now().toString,
-  };
+function changeActiveProjectHandler(target) {
+  setCurrentProject(target);
+  changeActiveClass();
+  changeActiveProjectSelector();
 }
 
-function renderNewTask() {
-  const newTaskListElement = document.createElement('li');
-  newTaskListElement.classList.add('task-list-item');
-  newTaskListElement.innerText = taskInputTitle.value;
-  taskList.appendChild(newTaskListElement);
+function setCurrentProject(target) {
+  if (target.classList.contains('project-list-item')) {
+    activeProject = target.dataset.id;
+    console.log(activeProject);
+  }
 }
 
+function changeActiveClass() {
+  const projectListItem = document.querySelectorAll('.project-list-item');
+  projectListItem.forEach((item) => {
+    if (item.classList.contains('project-list-item')) {
+      item.classList.remove('active');
+    }
+    if (item.dataset.id == activeProject) {
+      item.classList.add('active');
+    }
+  });
+}
+
+function changeActiveProjectSelector() {
+  const projectSelectorOptions = document.querySelectorAll('.project-option');
+  projectSelectorOptions.forEach((option) => {
+    option.removeAttribute('selected');
+    if (option.dataset.id == activeProject) {
+      option.setAttribute('selected', 'selected');
+    }
+  });
+}
+
+// TASKS
+
+// CLEAR USER INPUT
 function clearUserInput() {
   projectInputTitle.value = null;
   taskInputTitle.value = null;
@@ -152,18 +184,13 @@ function removeProjectLocalStorage(id) {
   localStorage.setItem('projects', JSON.stringify(projects));
 }
 
-// TOGGLE
-// function toggleActiveClass(target) {
-//   target.classList.toggle('active');
-// }
-
 // EVENTS
 projectCreateButton.addEventListener('click', createNewProjectHandler);
-taskCreateButton.addEventListener('click', createNewTaskHandler);
-
 projectList.addEventListener('click', (e) => {
   removeProjectHandler(e.target, e.target.dataset.id);
-  // toggleActiveClass(e.target);
+});
+projectList.addEventListener('click', (e) => {
+  changeActiveProjectHandler(e.target);
 });
 
 document.addEventListener('DOMContentLoaded', renderAllSavedProjects);

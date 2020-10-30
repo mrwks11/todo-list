@@ -68,8 +68,17 @@ body {
 
 /* PROJECTS & TASKS LISTS */
 
-.active {
+.active-project {
   font-weight: bold;
+}
+
+/* .project-title {
+  float: left; 
+} */
+
+.task-count {
+  float: right;
+  font-size: 15px;
 }
 
 .project-list-item,

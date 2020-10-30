@@ -85,6 +85,9 @@ function renderTasks(selectedProject) {
     listElement.dataset.taskId = task.id;
     listElement.classList.add('task-list-item');
     listElement.innerText = task.title;
+    if (task.complete) {
+      listElement.classList.add('task-complete');
+    }
     // Create details project button element
     const detailsButtonElement = document.createElement('button');
     detailsButtonElement.setAttribute('data-task-details-button', '');
@@ -238,12 +241,22 @@ newTaskForm.addEventListener('submit', (e) => {
 
 // Check task (complete)
 taskList.addEventListener('click', (e) => {
-  if (e.target.classList.contains('task-list-item')) {
-    e.target.classList.toggle('task-complete');
-  }
-  // if (e.target.classList.contains('task-list-item')) {
-  //   selectedProjectId.tasks.
-  // }
+  const selectedProject = projects.find(
+    (project) => project.id == selectedProjectId
+  );
+  selectedProject.tasks.forEach((task, index) => {
+    if (task.id == e.target.dataset.taskId) {
+      if (selectedProject.tasks[index].complete === false) {
+        e.target.classList.add('task-complete');
+        selectedProject.tasks[index].complete = true;
+      } else {
+        e.target.classList.remove('task-complete');
+        selectedProject.tasks[index].complete = false;
+      }
+    }
+  });
+  console.log(selectedProject.tasks);
+  saveProjectLocalStorage();
 });
 
 // Remove task

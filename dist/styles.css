@@ -72,12 +72,7 @@ body {
   font-weight: bold;
 }
 
-/* .project-title {
-  float: left; 
-} */
-
 .task-count {
-  float: right;
   font-size: 15px;
 }
 
@@ -90,10 +85,15 @@ body {
   cursor: pointer;
 }
 
-.project-remove-button {
+.project-remove-button,
+.task-remove-button {
   background-color: red;
   border: solid white 1px;
   color: white;
   float: right;
   padding: 3px 6px;
+}
+
+.task-complete {
+  text-decoration: line-through;
 }

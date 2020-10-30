@@ -37,10 +37,9 @@ function render() {
   );
   console.log(selectedProject);
   // Render project title
-  if (selectedProjectId === null || selectedProjectId == undefined) {
+  if (selectedProject == null || selectedProject == undefined) {
     taskListContainer.innerHTML = `<h2>No project selected.</h2>`;
   } else {
-    taskListContainer.style.display = '';
     taskListProjectTitle.innerText = selectedProject.title;
   }
   // renderTaskCount(selectedProject);
@@ -86,19 +85,25 @@ function renderTasks(selectedProject) {
     listElement.dataset.taskId = task.id;
     listElement.classList.add('task-list-item');
     listElement.innerText = task.title;
-    // Create delete project button element
-    const buttonElement = document.createElement('button');
-    buttonElement.setAttribute('data-task-remove-button', '');
-    buttonElement.classList.add('button', 'task-remove-button');
-    buttonElement.innerText = 'X';
+    // Create details project button element
+    const detailsButtonElement = document.createElement('button');
+    detailsButtonElement.setAttribute('data-task-details-button', '');
+    detailsButtonElement.classList.add('button', 'task-details-button');
+    detailsButtonElement.innerText = 'Details';
+    // Create remove project button element
+    const removeButtonElement = document.createElement('button');
+    removeButtonElement.setAttribute('data-task-remove-button', '');
+    removeButtonElement.classList.add('button', 'task-remove-button');
+    removeButtonElement.innerText = 'X';
 
     // Append created elements
-    listElement.appendChild(buttonElement);
+    listElement.appendChild(removeButtonElement);
+    listElement.appendChild(detailsButtonElement);
     taskList.appendChild(listElement);
   });
 }
 
-// CREATE PROJECT
+// CREATE PROJECT OBJECT
 function createProject(title) {
   return {
     title: title,
@@ -107,7 +112,7 @@ function createProject(title) {
   };
 }
 
-// CREATE TASK
+// CREATE TASK OBJECT
 function createTask(title, description, date, time, priority) {
   return {
     title: title,
@@ -155,7 +160,19 @@ function removeProjectLocalStorage(target) {
       projects.splice(index, 1);
     }
   });
-  localStorage.setItem('projects', JSON.stringify(projects));
+  localStorage.setItem(LOCAL_STORAGE_PROJECT_KEY, JSON.stringify(projects));
+}
+
+function removeTaskLocalStorage(target) {
+  const selectedProject = projects.find(
+    (project) => project.id == selectedProjectId
+  );
+  selectedProject.tasks.forEach((task, index) => {
+    if (task.id == target.parentElement.dataset.taskId) {
+      selectedProject.tasks.splice(index, 1);
+    }
+  });
+  localStorage.setItem(LOCAL_STORAGE_PROJECT_KEY, JSON.stringify(projects));
 }
 
 // EVENTS
@@ -175,6 +192,7 @@ newProjectForm.addEventListener('submit', (e) => {
 projectList.addEventListener('click', (e) => {
   if (e.target.classList.contains('project-list-item')) {
     selectedProjectId = e.target.dataset.projectId;
+    console.log(selectedProjectId);
     saveProjectLocalStorage();
     render();
   }
@@ -215,7 +233,7 @@ newTaskForm.addEventListener('submit', (e) => {
   selectedProject.tasks.push(task);
   saveProjectLocalStorage();
   render();
-  console.log(projects);
+  // console.log(projects);
 });
 
 // Check task (complete)
@@ -223,9 +241,20 @@ taskList.addEventListener('click', (e) => {
   if (e.target.classList.contains('task-list-item')) {
     e.target.classList.toggle('task-complete');
   }
+  // if (e.target.classList.contains('task-list-item')) {
+  //   selectedProjectId.tasks.
+  // }
 });
 
 // Remove task
+taskList.addEventListener('click', (e) => {
+  if (e.target.classList.contains('task-remove-button')) {
+    e.target.parentElement.remove();
+    removeTaskLocalStorage(e.target);
+    saveProjectLocalStorage();
+    render();
+  }
+});
 
 document.addEventListener('DOMContentLoaded', render);
 

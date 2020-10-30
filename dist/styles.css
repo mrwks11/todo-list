@@ -85,6 +85,14 @@ body {
   cursor: pointer;
 }
 
+.task-details-button {
+  background-color: blue;
+  border: solid white 1px;
+  color: white;
+  float: right;
+  padding: 3px 6px;
+}
+
 .project-remove-button,
 .task-remove-button {
   background-color: red;
@@ -95,5 +103,8 @@ body {
 }
 
 .task-complete {
+  /* font-weight: bold; */
+  color: rgba(0, 0, 0, 0.5);
   text-decoration: line-through;
+  text-decoration-color: black;
 }

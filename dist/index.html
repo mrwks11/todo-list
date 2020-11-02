@@ -7,13 +7,14 @@
     <link rel="stylesheet" href="styles.css" />
     <script src="main.js" defer></script>
   </head>
+
   <body>
-    <h1>Todo List</h1>
+    <h1>My Todo List</h1>
 
     <div class="main-container">
       <div class="project-list-container">
-        <h2>My Projects</h2>
-        <ul class="project-list" data-project-list></ul>
+        <div class="project-list-title"><h2>My Projects</h2></div>
+        <div class="project-list" data-project-list></div>
       </div>
 
       <form class="project-form" data-new-project-form>
@@ -33,11 +34,13 @@
       </form>
 
       <div class="task-list-container" data-task-list-container>
-        <h2 class="project-title" data-project-title>Project Title</h2>
-        <p class="task-count" data-task-count>3 Tasks Remaining</p>
-        <ul class="task-list" data-task-list></ul>
+        <div class="project-list-title">
+          <h2 data-project-title>Project Title</h2>
+        </div>
+        <p class="task-count" data-task-count></p>
+        <div class="task-list" data-task-list></div>
         <p class="clear-completed-tasks" data-clear-completed-tasks>
-          Clear Completed Tasks
+          Clear All Completed Tasks
         </p>
       </div>
 

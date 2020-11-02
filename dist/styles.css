@@ -9,11 +9,12 @@
 }
 
 body {
+  background-color: #f2f2f2;
   margin: 20px;
 }
 
-.button {
-  cursor: pointer;
+h1 {
+  text-align: center;
 }
 
 /* MODAL */
@@ -49,14 +50,25 @@ body {
   grid-template-columns: 1fr 1fr;
 }
 
+.project-list-title {
+  background-color: #00203fff;
+  color: white;
+  padding: 10px;
+}
+
+.project-list,
+.task-list {
+  padding: 0px;
+}
+
 .project-list-container,
 .task-list-container {
   border: 1px solid black;
-  background-color: teal;
-  color: white;
+  background-color: #f2f2f2;
+  color: black;
   margin-top: 33px;
   margin-right: 20px;
-  padding: 10px;
+  padding: 0px;
   max-width: 500px;
 }
 
@@ -75,12 +87,12 @@ body {
 
 .project-legend,
 .task-legend {
-  font-size: 1.5em;
+  font-size: 25px;
 }
 
 .project-label,
 .task-label {
-  font-size: 1.2em;
+  font-size: 18px;
   font-weight: bold;
 }
 
@@ -89,9 +101,21 @@ body {
 .task-input,
 .task-create-button,
 .task-cancel-button {
+  cursor: pointer;
   display: block;
-  font-size: 1.1em;
+  font-size: 18px;
   margin-bottom: 15px;
+  padding: 5px 10px;
+}
+
+.task-create-button,
+.project-create-button,
+.task-cancel-button {
+  background-color: teal;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
   padding: 5px 10px;
 }
 
@@ -101,35 +125,51 @@ body {
   font-weight: bold;
 }
 
-.task-count {
+.task-count,
+.clear-completed-tasks {
+  background-color: teal;
+  color: white;
   font-size: 15px;
-  margin: 10px 0;
+  padding: 10px;
+  text-align: center;
 }
 
 .project-list-item,
 .task-list-item {
-  font-size: 18px;
+  font-size: 20px;
   list-style: square;
-  padding-top: 10px;
-  margin-left: 20px;
+  padding: 10px;
   cursor: pointer;
 }
 
+.project-list-item:nth-child(odd),
+.task-list-item:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+.project-list-item:nth-child(even),
+.task-list-item:nth-child(even) {
+  background-color: white;
+}
+
 .task-details-button {
-  background-color: blue;
-  border: solid white 1px;
-  color: white;
-  float: right;
-  padding: 3px 6px;
+  background-color: #00203fff;
+}
+
+.task-remove-button,
+.project-remove-button {
+  background-color: red;
 }
 
 .project-remove-button,
-.task-remove-button {
-  background-color: red;
+.task-remove-button,
+.task-details-button {
   border: solid white 1px;
+  border-radius: 5px;
   color: white;
+  cursor: pointer;
   float: right;
-  padding: 3px 6px;
+  padding: 5px 10px;
 }
 
 .task-complete {
@@ -140,6 +180,5 @@ body {
 }
 
 .clear-completed-tasks {
-  margin-top: 20px;
   cursor: pointer;
 }

@@ -1,9 +1,11 @@
+// SELECTORS
+// Projects
 const projectList = document.querySelector('[data-project-list]');
 const newProjectForm = document.querySelector('[data-new-project-form');
 const newProjectTitleInput = document.querySelector(
   '[data-new-project-title-input]'
 );
-// const projectSelector = document.querySelector('[data-project-selector]');
+// Tasks
 const taskListContainer = document.querySelector('[data-task-list-container]');
 const taskListProjectTitle = document.querySelector('[data-project-title');
 const taskList = document.querySelector('[data-task-list]');
@@ -21,7 +23,7 @@ const newTaskPriorityInput = document.querySelector(
 const clearCompletedTasks = document.querySelector(
   '[data-clear-completed-tasks]'
 );
-// MODAL
+// Modal
 const taskModal = document.querySelector('[data-task-modal]');
 const taskModalContent = document.querySelector('[data-task-modal-content]');
 const editTaskLegend = document.querySelector('[data-edit-task-legend]');
@@ -41,15 +43,18 @@ const editTaskPriorityInput = document.querySelector(
 // const confirmDelete = document.querySelector('[data-confirm-delete]');
 // const cancelDelete = document.querySelector('[data-confirm-delete]');
 
+// Create variable and assing value to avoid overriding
 const LOCAL_STORAGE_PROJECT_KEY = 'projects';
 const LOCAL_STORAGE_SELECTED_PROJECT_ID_KEY = 'selectedProjectId';
 
+// GET SAVED PROJECTS FRONM LOCAL STORAGE
 let projects =
   JSON.parse(localStorage.getItem(LOCAL_STORAGE_PROJECT_KEY)) || [];
 let selectedProjectId = localStorage.getItem(
   LOCAL_STORAGE_SELECTED_PROJECT_ID_KEY
 );
 
+// RENDER ALL ELEMENTS
 function render() {
   clearElements(projectList);
   renderProjects();
@@ -57,16 +62,15 @@ function render() {
   const selectedProject = projects.find(
     (project) => project.id == selectedProjectId
   );
-  console.log(selectedProject);
   // Render project title
   if (selectedProject == null || selectedProject == undefined) {
-    taskListContainer.innerHTML = `<h2>No project selected.</h2>`;
+    taskListProjectTitle.innerText = `No project selected.`;
   } else {
-    taskListProjectTitle.innerText = selectedProject.title;
+    taskListProjectTitle.innerText = `${selectedProject.title}`;
   }
   clearElements(taskList);
-  renderTaskCount(selectedProject);
   renderTasks(selectedProject);
+  renderTaskCount(selectedProject);
 }
 
 // CLEAR ALL PROJECT & TASK ELEMENTS BEFORE RENDERING
@@ -80,10 +84,10 @@ function clearElements(element) {
 function renderProjects() {
   projects.forEach((project) => {
     // Create project list element
-    const listElement = document.createElement('li');
+    const listElement = document.createElement('div');
     listElement.dataset.projectId = project.id;
     listElement.classList.add('project-list-item');
-    listElement.innerText = project.title;
+    listElement.innerText = `- ${project.title}`;
     if (project.id == selectedProjectId) {
       listElement.classList.add('active-project');
     }
@@ -103,10 +107,10 @@ function renderProjects() {
 function renderTasks(selectedProject) {
   selectedProject.tasks.forEach((task) => {
     // Create task list element
-    const listElement = document.createElement('li');
+    const listElement = document.createElement('div');
     listElement.dataset.taskId = task.id;
     listElement.classList.add('task-list-item');
-    listElement.innerText = task.title;
+    listElement.innerText = `- ${task.title}`;
     if (task.complete) {
       listElement.classList.add('task-complete');
     }
@@ -126,6 +130,15 @@ function renderTasks(selectedProject) {
     listElement.appendChild(detailsButtonElement);
     taskList.appendChild(listElement);
   });
+}
+
+// RENDER TASK COUNT
+function renderTaskCount(selectedProject) {
+  const incompleteTaskCount = selectedProject.tasks.filter(
+    (task) => !task.complete
+  ).length;
+  const taskString = incompleteTaskCount == 1 ? 'Task' : 'Tasks';
+  taskCount.innerText = `${incompleteTaskCount} ${taskString} Remaining`;
 }
 
 // CREATE PROJECT OBJECT
@@ -150,14 +163,6 @@ function createTask(title, description, date, time, priority) {
   };
 }
 
-function renderTaskCount(selectedProject) {
-  const incompleteTaskCount = selectedProject.tasks.filter(
-    (task) => !task.complete
-  ).length;
-  const taskString = incompleteTaskCount == 1 ? 'Task' : 'Tasks';
-  taskCount.innerText = `${incompleteTaskCount} ${taskString} Remaining`;
-}
-
 // CLEAR USER INPUT
 function clearUserInput() {
   // Project
@@ -167,7 +172,7 @@ function clearUserInput() {
   newTaskDescriptionInput.value = null;
   newTaskDescriptionInput.value = null;
   newTaskDateInput.value = null;
-  newTaskPriorityInput.value = null;
+  // newTaskPriorityInput.value = null;
 }
 
 // LOCAL STORAGE
@@ -217,7 +222,6 @@ newProjectForm.addEventListener('submit', (e) => {
 projectList.addEventListener('click', (e) => {
   if (e.target.classList.contains('project-list-item')) {
     selectedProjectId = e.target.dataset.projectId;
-    console.log(selectedProjectId);
     saveProjectLocalStorage();
     render();
   }
@@ -258,7 +262,6 @@ newTaskForm.addEventListener('submit', (e) => {
   selectedProject.tasks.push(task);
   saveProjectLocalStorage();
   render();
-  // console.log(projects);
 });
 
 // Check task (complete)
@@ -277,7 +280,6 @@ taskList.addEventListener('click', (e) => {
       }
     }
   });
-  // console.log(selectedProject.tasks);
   saveProjectLocalStorage();
   render();
 });
@@ -372,5 +374,3 @@ document.addEventListener('click', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', render);
-
-console.log(projects);

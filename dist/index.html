@@ -34,8 +34,11 @@
 
       <div class="task-list-container" data-task-list-container>
         <h2 class="project-title" data-project-title>Project Title</h2>
-        <!-- <p class="task-count" data-task-count>3 Tasks Remaining</p> -->
+        <p class="task-count" data-task-count>3 Tasks Remaining</p>
         <ul class="task-list" data-task-list></ul>
+        <p class="clear-completed-tasks" data-clear-completed-tasks>
+          Clear Completed Tasks
+        </p>
       </div>
 
       <form class="task-form" data-new-task-form>
@@ -98,9 +101,17 @@
       </form>
     </div>
 
-    <div class="modal" data-task-modal>
-      <div class="modal-content" data-task-modal-content>
-        <form class="modal-task-form" data-edit-task-form>
+    <div class="confirm-modal" data-confirm-modal>
+      <div class="confirm-modal-content">
+        <p>Are you sure you want to delete this item?</p>
+        <button data-confirm-delete>Yes</button>
+        <button data-cancel-delete>No</button>
+      </div>
+    </div>
+
+    <div class="task-modal" data-task-modal>
+      <div class="task-modal-content" data-task-modal-content>
+        <form class="task-modal-form" data-edit-task-form>
           <fieldset class="task-fieldset">
             <legend class="task-legend" data-edit-task-legend>Edit Task</legend>
             <label class="task-label" for="task-title">Task Title</label>

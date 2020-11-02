@@ -18,6 +18,9 @@ const newTaskTimeInput = document.querySelector('[data-new-task-time-input]');
 const newTaskPriorityInput = document.querySelector(
   '[data-new-task-priority-input]'
 );
+const clearCompletedTasks = document.querySelector(
+  '[data-clear-completed-tasks]'
+);
 // MODAL
 const taskModal = document.querySelector('[data-task-modal]');
 const taskModalContent = document.querySelector('[data-task-modal-content]');
@@ -34,6 +37,9 @@ const editTaskTimeInput = document.querySelector('[data-edit-task-time-input]');
 const editTaskPriorityInput = document.querySelector(
   '[data-edit-task-priority-input]'
 );
+// const confirmModal = document.querySelector('[data-confirm-modal]');
+// const confirmDelete = document.querySelector('[data-confirm-delete]');
+// const cancelDelete = document.querySelector('[data-confirm-delete]');
 
 const LOCAL_STORAGE_PROJECT_KEY = 'projects';
 const LOCAL_STORAGE_SELECTED_PROJECT_ID_KEY = 'selectedProjectId';
@@ -59,7 +65,7 @@ function render() {
     taskListProjectTitle.innerText = selectedProject.title;
   }
   clearElements(taskList);
-  // renderTaskCount(selectedProject);
+  renderTaskCount(selectedProject);
   renderTasks(selectedProject);
 }
 
@@ -144,13 +150,13 @@ function createTask(title, description, date, time, priority) {
   };
 }
 
-// function renderTaskCount(selectedProject) {
-//   const incompleteTaskCount = selectedProject.tasks.filter(
-//     (task) => !task.complete.length
-//   );
-//   const taskString = incompleteTaskCount == 1 ? 'Task' : 'Tasks';
-//   taskCount.innerText = `${incompleteTaskCount} ${taskString} Remaining`;
-// }
+function renderTaskCount(selectedProject) {
+  const incompleteTaskCount = selectedProject.tasks.filter(
+    (task) => !task.complete
+  ).length;
+  const taskString = incompleteTaskCount == 1 ? 'Task' : 'Tasks';
+  taskCount.innerText = `${incompleteTaskCount} ${taskString} Remaining`;
+}
 
 // CLEAR USER INPUT
 function clearUserInput() {
@@ -271,8 +277,9 @@ taskList.addEventListener('click', (e) => {
       }
     }
   });
-  console.log(selectedProject.tasks);
+  // console.log(selectedProject.tasks);
   saveProjectLocalStorage();
+  render();
 });
 
 // Remove task
@@ -283,6 +290,18 @@ taskList.addEventListener('click', (e) => {
     saveProjectLocalStorage();
     render();
   }
+});
+
+// Clear completed tasks
+clearCompletedTasks.addEventListener('click', (e) => {
+  const selectedProject = projects.find(
+    (project) => project.id == selectedProjectId
+  );
+  selectedProject.tasks = selectedProject.tasks.filter(
+    (task) => !task.complete
+  );
+  saveProjectLocalStorage();
+  render();
 });
 
 // Open task modal
@@ -344,7 +363,10 @@ editTaskForm.addEventListener('click', (e) => {
 });
 
 document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('modal')) {
+  if (
+    e.target.classList.contains('task-modal') ||
+    e.target.classList.contains('task-modal-content')
+  ) {
     taskModal.style.display = 'none';
   }
 });

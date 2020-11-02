@@ -18,7 +18,8 @@ body {
 
 /* MODAL */
 
-.modal {
+.task-modal,
+.confirm-modal {
   display: none;
   position: fixed;
   z-index: 1;
@@ -31,7 +32,8 @@ body {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
-.modal-task-form {
+.task-modal-form,
+.confirm-modal-content {
   background-color: #fefefe;
   margin: 10% auto;
   padding: 20px;
@@ -101,6 +103,7 @@ body {
 
 .task-count {
   font-size: 15px;
+  margin: 10px 0;
 }
 
 .project-list-item,
@@ -134,4 +137,9 @@ body {
   color: rgba(0, 0, 0, 0.5);
   text-decoration: line-through;
   text-decoration-color: black;
+}
+
+.clear-completed-tasks {
+  margin-top: 20px;
+  cursor: pointer;
 }

@@ -18,6 +18,22 @@ const newTaskTimeInput = document.querySelector('[data-new-task-time-input]');
 const newTaskPriorityInput = document.querySelector(
   '[data-new-task-priority-input]'
 );
+// MODAL
+const taskModal = document.querySelector('[data-task-modal]');
+const taskModalContent = document.querySelector('[data-task-modal-content]');
+const editTaskLegend = document.querySelector('[data-edit-task-legend]');
+const editTaskForm = document.querySelector('[data-edit-task-form]');
+const editTaskTitleInput = document.querySelector(
+  '[data-edit-task-title-input]'
+);
+const editTaskDescriptionInput = document.querySelector(
+  '[data-edit-task-description-input]'
+);
+const editTaskDateInput = document.querySelector('[data-edit-task-date-input]');
+const editTaskTimeInput = document.querySelector('[data-edit-task-time-input]');
+const editTaskPriorityInput = document.querySelector(
+  '[data-edit-task-priority-input]'
+);
 
 const LOCAL_STORAGE_PROJECT_KEY = 'projects';
 const LOCAL_STORAGE_SELECTED_PROJECT_ID_KEY = 'selectedProjectId';
@@ -42,8 +58,8 @@ function render() {
   } else {
     taskListProjectTitle.innerText = selectedProject.title;
   }
-  // renderTaskCount(selectedProject);
   clearElements(taskList);
+  // renderTaskCount(selectedProject);
   renderTasks(selectedProject);
 }
 
@@ -128,11 +144,11 @@ function createTask(title, description, date, time, priority) {
   };
 }
 
-// function renderTaskCount(selectedList) {
-//   const incompleteTaskCount = selectedList.tasks.filter(
+// function renderTaskCount(selectedProject) {
+//   const incompleteTaskCount = selectedProject.tasks.filter(
 //     (task) => !task.complete.length
 //   );
-//   const taskString = incompleteTaskCount === 1 ? 'Task' : 'Tasks';
+//   const taskString = incompleteTaskCount == 1 ? 'Task' : 'Tasks';
 //   taskCount.innerText = `${incompleteTaskCount} ${taskString} Remaining`;
 // }
 
@@ -266,6 +282,70 @@ taskList.addEventListener('click', (e) => {
     removeTaskLocalStorage(e.target);
     saveProjectLocalStorage();
     render();
+  }
+});
+
+// Open task modal
+taskList.addEventListener('click', (e) => {
+  const selectedProject = projects.find(
+    (project) => project.id == selectedProjectId
+  );
+  if (e.target.classList.contains('task-details-button')) {
+    taskModal.style.display = 'block';
+    selectedProject.tasks.forEach((task, index) => {
+      if (task.id == e.target.parentElement.dataset.taskId) {
+        editTaskLegend.innerText = `Edit Task (ID: ${task.id})`;
+        editTaskLegend.setAttribute('data-task-id', `${task.id}`);
+        editTaskTitleInput.value = selectedProject.tasks[index].title;
+        editTaskDescriptionInput.value =
+          selectedProject.tasks[index].description;
+        editTaskDateInput.value = selectedProject.tasks[index].date;
+        editTaskTimeInput.value = selectedProject.tasks[index].time;
+        editTaskPriorityInput.value = selectedProject.tasks[index].priority;
+      }
+    });
+  }
+});
+
+// Edit task
+editTaskForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const title = editTaskTitleInput.value;
+  const description = editTaskDescriptionInput.value;
+  const date = editTaskDateInput.value;
+  const time = editTaskTimeInput.value;
+  const priority = editTaskPriorityInput.value;
+
+  if (title === null || title === '') return;
+
+  const selectedProject = projects.find(
+    (project) => project.id == selectedProjectId
+  );
+
+  selectedProject.tasks.forEach((task, index) => {
+    if (task.id == editTaskLegend.dataset.taskId) {
+      selectedProject.tasks[index].title = title;
+      selectedProject.tasks[index].description = description;
+      selectedProject.tasks[index].date = date;
+      selectedProject.tasks[index].time = time;
+      selectedProject.tasks[index].priority = priority;
+    }
+  });
+  taskModal.style.display = 'none';
+  saveProjectLocalStorage();
+  render();
+});
+
+// Cancel edit task
+editTaskForm.addEventListener('click', (e) => {
+  if (e.target.classList.contains('task-cancel-button')) {
+    taskModal.style.display = 'none';
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal')) {
+    taskModal.style.display = 'none';
   }
 });
 
